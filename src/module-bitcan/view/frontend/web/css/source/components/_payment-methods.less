@@ -1,0 +1,38 @@
+& when (@media-common = true) {
+    .bitcan-payment-methods {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        
+        div.mage-error {
+            display: block;
+            width: 100%;
+            flex-basis: 100%;
+            margin-bottom: 15px;
+        }
+        
+        &__item {
+            width: 100px;
+            padding: 3px;
+            margin: 3px;
+            cursor: pointer;
+            
+            @media only screen and (min-width: 480px) {
+                width: 120px;
+            }
+            
+            @media only screen and (min-width: 768px) {
+                width: 140px;
+            }
+            
+            @media only screen and (min-width: 992px) {
+                width: 150px;
+            }
+            
+            &.selected-payment-method {
+                border: 1px solid #1979c3;
+            }
+        }
+    }
+}

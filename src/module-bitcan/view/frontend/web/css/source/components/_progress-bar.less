@@ -1,0 +1,157 @@
+& when (@media-common = true) {
+    .progress-bar {
+        display: flex;
+        align-items: stretch;
+        
+        list-style: none;
+        overflow: hidden;
+        counter-reset: step;
+    
+        padding: 0;
+        margin-top: 0;
+        margin-left: -2px;
+        margin-right: -2px;
+        margin-bottom: 15px;
+        
+        @media only screen and (min-width: 768px) {
+            margin-bottom: 30px;
+        }
+        
+        &__item {
+            position: relative;
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            width: 25%;
+            text-align: center;
+            list-style-type: none;
+            
+            padding-left: 2px;
+            padding-right: 2px;
+            padding-bottom: 45px;
+            
+            @media only screen and (min-width: 768px) {
+                padding-bottom: 50px;
+            }
+            
+            &:before {
+                position: absolute;
+                content: counter(step);
+                counter-increment: step;
+                width: 30px;
+                height: 30px;
+                line-height: 28px;
+                display: block;
+                font-size: 1.5rem;
+                text-align: center;
+                color: #091925;
+                background: #ececec;
+                border-radius: 50%;
+                left: 50%;
+                bottom: 0;
+                margin: 0 auto 5px auto;
+                -webkit-transform: translateX(-50%);
+                -ms-transform: translateX(-50%);
+                -moz-transform: translateX(-50%);
+                transform: translateX(-50%);
+            }
+            
+            &:after {
+                content: '';
+                width: 100%;
+                height: 1px;
+                background: #ececec;
+                position: absolute;
+                left: -50%;
+                bottom: 19px;
+                z-index: -1;
+                
+                @media only screen and (min-width: 480px) {
+                    left: -31%;
+                    width: 63%;
+                }
+                
+                @media only screen and (min-width: 768px) {
+                    left: -35%;
+                    width: 70%;
+                }
+            }
+            
+            &:first-child:after {
+                content: none;
+                display: none;
+            }
+            
+            &:last-child {
+                width: 40%;
+                
+                @media only screen and (min-width: 480px) {
+                    width: 25%;
+                }
+                
+                &:after {
+                    left: -40%;
+                    
+                    @media only screen and (min-width: 480px) {
+                        left: -31%;
+                    }
+                    
+                    @media only screen and (min-width: 768px) {
+                        left: -35%;
+                    }
+                }
+            }
+            
+            &.is-active:before,
+            &.is-active:after {
+                background: #1979c3;
+                color: #ffffff;
+            }
+            
+            &.is-active.is-next:before {
+                content: '\2713';
+            }
+        }
+        
+        &__title {
+            display: block;
+            font-size: 1px;
+            
+            @media only screen and (min-width: 480px) {
+                font-size: 12px;
+            }
+            
+            @media only screen and (min-width: 768px) {
+                font-size: 14px;
+            }
+        }
+    
+        &--alt {
+            .progress-bar__title {
+                display: none;
+            }
+        
+            .progress-bar__item:last-child {
+                width: 25%;
+            
+                @media only screen and (min-width: 480px) {
+                    width: 25%;
+                }
+            
+                &:after {
+                    left: -50%;
+                
+                    @media only screen and (min-width: 480px) {
+                        left: -31%;
+                    }
+                
+                    @media only screen and (min-width: 768px) {
+                        left: -35%;
+                    }
+                }
+            }
+        }
+    }
+}
