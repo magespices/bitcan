@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * Created by Q-Solutions Studio
+ * Date: 12.08.2020
+ *
+ * @category    Magespices
+ * @package     Magespices_Bitcan
+ * @author      Maciej Buchert <maciej@qsolutionsstudio.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+        <job name="update_bitcan_payment_status" instance="Magespices\Bitcan\Cron\UpdatePayment" method="execute">
+            <schedule>*/5 * * * *</schedule>
+        </job>
+        <job name="update_nbp_exchange_rate" instance="Magespices\Bitcan\Cron\UpdateNbpExchangeRate" method="execute">
+            <schedule>5 * * * *</schedule>
+        </job>
+    </group>
+</config>

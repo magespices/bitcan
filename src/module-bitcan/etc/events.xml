@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * Created by Q-Solutions Studio
+ * Date: 12.08.2020
+ *
+ * @category    Magespices
+ * @package     Magespices_Bitcan
+ * @author      Maciej Buchert <maciej@qsolutionsstudio.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="payment_method_assign_data_bitcan">
+        <observer name="magespices_bitcan_assign_additional_information" instance="Magespices\Bitcan\Observer\AssignAdditionalInformation" />
+    </event>
+</config>

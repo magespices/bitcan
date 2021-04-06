@@ -1,0 +1,201 @@
+<!--
+ /**
+ * Created by Q-Solutions Studio
+ * Date: 30.07.2020
+ *
+ * @category    Magespices
+ * @package     Magespices_Bitcan
+ * @author      Maciej Buchert <maciej@qsolutionsstudio.com>
+ */
+-->
+<div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+    <div class="payment-method-content">
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+
+        <!-- ko ifnot: canPlaceOrder -->
+            <div class="message message--error error">
+                <span data-bind="i18n: 'This method cannot be used for this order.'" />
+            </div>
+        <!-- /ko -->
+
+        <!-- ko if: canPlaceOrder -->
+            <div class="payment-method-billing-address">
+                <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="checkout-agreements-block">
+                <!-- ko foreach: $parent.getRegion('before-place-order') -->
+                <!-- ko template: getTemplate() --><!-- /ko -->
+                <!--/ko-->
+            </div>
+            <div class="actions-toolbar">
+
+                <div class="primary">
+                    <button class="action primary checkout"
+                            type="submit"
+                            data-bind="
+                            click: placeOrder,
+                            attr: {title: $t('Place Order')},
+                            css: {disabled: !isPlaceOrderActionAllowed()},
+                            enable: (getCode() == isChecked())
+                            "
+                            disabled>
+                        <span data-bind="i18n: 'Place Order'"></span>
+                    </button>
+                </div>
+            </div>
+        <!-- /ko -->
+    </div>
+</div>
+
+<div id="bitcan_popup" class="bitcan" style="display: none">
+    <header class="bitcan__header">
+        <h3 class="bitcan__title" data-bind="i18n: 'Bitcan Payment'"></h3>
+    </header>
+    <div class="bitcan__content">
+        <div class="bitcan__progress-bar">
+            <ul id="progressbar" class="progress-bar progress-bar--alt">
+                <li class="progress-bar__item is-active step-1">
+                    <span class="progress-bar__title" data-bind="i18n: 'Information about the exchange'"></span>
+                </li>
+                <li class="progress-bar__item step-2">
+                    <span class="progress-bar__title" data-bind="i18n: 'Enter phone number to send SMS Code'"></span>
+                </li>
+                <li class="progress-bar__item step-3">
+                    <span class="progress-bar__title" data-bind="i18n: 'Enter SMS Code'"></span>
+                </li>
+                <li class="progress-bar__item step-4">
+                    <span class="progress-bar__title" data-bind="i18n: 'Select payment method'"></span>
+                </li>
+                <li class="progress-bar__item step-5">
+                    <span class="progress-bar__title" data-bind="i18n: 'Enter BLIK code'"></span>
+                </li>
+                <li class="progress-bar__item step-6">
+                    <span class="progress-bar__title" data-bind="i18n: 'Confirm BLIK code in the bank mobile app'"></span>
+                </li>
+                <li class="progress-bar__item step-7">
+                    <span class="progress-bar__title" data-bind="i18n: 'KYC Verification'"></span>
+                </li>
+                <li class="progress-bar__item step-8">
+                    <span class="progress-bar__title" data-bind="i18n: 'Completing payment'"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="steps bitcan__steps">
+            <div id="step-1" class="step bitcan__step is-active">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Information about the exchange'"></h4>
+                    <p><span data-bind="i18n: 'Order value in USD'"></span>: <span data-bind="text: getOrderGrandTotal()"></span></p>
+                    <p><span data-bind="i18n: 'Exchange rate (USD/PLN)'"></span>: <span data-bind="text: getExchangePlnRate(true)"></span> (<span data-bind="i18n: 'Depends on nbp.pl'"></span>)</p>
+                    <p><span data-bind="i18n: 'Order value in PLN'"></span>: <span data-bind="text: getExchangeToPln(true)"></span></p>
+                    <p><span data-bind="i18n: 'Exchange rate (BTC/PLN)'"></span>: <span data-bind="text: getBtcData()"></span></p>
+                    <p><span data-bind="i18n: 'Order value in BTC'"></span>: <span data-bind="text: getBtcData('amount')"></span></p>
+                    <div class="bitcan__step-actions bitcan__step-actions--center">
+                        <button class="button button--small next" data-bind="i18n: 'Continue', click: goToStep.bind($data, 'step-2')"></button>
+                    </div>
+                </div>
+            </div>
+            <div id="step-2" class="step bitcan__step">
+                <div class="bitcan__step-content" data-bind="afterRender: renderReCaptcha($element)">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Enter phone number to send SMS Code'"></h4>
+                    <div class="input input--s">
+                        <label class="label u-hidden" for="phone_number" data-bind="i18n: 'Enter phone number to send SMS Code'"></label>
+                        <input class="input__field input__field--s" type="text" minlength="11" maxlength="11" name="phone_number" id="phone_number" data-bind="afterRender: autoFormatPhoneNumber($element)" />
+                    </div>
+                    <div class="error mage-error" style="text-align: center;"><span></span></div>
+                    <div class="bitcan__step-actions">
+                        <span class="link" data-bind="click: goToStep.bind($data, 'step-1')"><span data-bind="i18n: 'Back'"></span></span>
+                        <button class="button button--small js-button-submit-sms-code" data-bind="click: _submitSMSCode.bind($data, $element)">
+                            <span data-bind="i18n: 'Submit SMS Code'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="step-3" class="step bitcan__step">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Enter SMS Code'"></h4>
+                    <div class="input input--s">
+                        <label class="label u-hidden" for="sms_code" data-bind="i18n: 'Enter phone number to send SMS Code'"></label>
+                        <input class="input__field input__field--s" type="text" minlength="7" maxlength="7" name="sms_code" id="sms_code" data-bind="afterRender: autoFormatSmsCode($element)" />
+                    </div>
+                    <div class="error mage-error" style="text-align: center;"><span></span></div>
+                    <span class="link resend-email js-bitcan-resend-code disabled" data-bind="click: goToStep.bind($data, 'step-2')" disabled>
+                        <span data-bind="i18n: 'Resend SMS Code'"></span>
+                        <span id="bitcan-counter-info">&nbsp;>> (<span class="js-bitcan-timer" data-bind="text: '120'" data-time="120" data-seconds="0"></span><span data-bind="text: 's'"></span>)</span>
+                    </span>
+                    <div class="bitcan__step-actions bitcan__step-actions--center">
+                        <button class="button button--small js-button-verify-sms-code" data-bind="click: _verifySMSCode.bind($data, $element)">
+                            <span data-bind="i18n: 'Verify SMS Code'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="step-4" class="step bitcan__step">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Select payment method'"></h4>
+                    <div class="error mage-error" style="text-align: center;"><span></span></div>
+                    <div id="payment_methods" class="bitcan-payment-methods" data-bind="foreach: {data: getPaymentMethods()}">
+                        <!-- ko if: $index() == 0 -->
+                        <div data-role="loader" class="loader loader--visible" style="background: rgba(255,255,255,.8);display: none">
+                            <div class="loader__circle"></div>
+                        </div>
+                        <!-- /ko -->
+                        <div class="payment_method bitcan-payment-methods__item" data-bind="attr: {'data-id': id}, click: $parent._selectPaymentMethod.bind($parent, $element)">
+                            <img data-bind="attr: {src: img, alt: name}" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-5" class="step bitcan__step">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Enter BLIK code'"></h4>
+                    <div data-role="loader" class="loader loader--visible" style="background: rgba(255,255,255,.8);display: none">
+                        <div class="loader__circle"></div>
+                    </div>
+                    <div class="input input--s">
+                        <label class="label u-hidden" for="blik_code" data-bind="i18n: 'Enter BLIK code'"></label>
+                        <input class="input__field input__field--s" type="text" minlength="6" maxlength="6" name="blik_code" id="blik_code" />
+                    </div>
+                    <div class="error mage-error" style="text-align: center;"><span></span></div>
+                    <div class="bitcan__step-actions bitcan__step-actions--center">
+                        <button class="button button--small" data-bind="click: _submitBlikCode.bind($data, $element)">
+                            <span data-bind="i18n: 'Submit code'"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="step-7" class="step bitcan__step">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'KYC Verification'"></h4>
+                    <div id="kyc_verification" style="height: 480px;">
+                        <div data-role="loader" class="loader loader--visible">
+                            <div class="loader__circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-8" class="step bitcan__step">
+                <div class="bitcan__step-content">
+                    <h4 class="bitcan__step-title" data-bind="i18n: 'Completing payment'"></h4>
+                    <h6 class="bitcan__step-title" data-bind="i18n: 'Confirm BLIK code in the bank mobile app', visible: (blikSelected && isSandbox())"></h6>
+                    <div id="payment" style="height: 170px">
+                        <div class="error mage-error" style="text-align: center;"><span></span></div>
+                        <div data-role="loader" class="loader loader--visible">
+                            <div class="loader__circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

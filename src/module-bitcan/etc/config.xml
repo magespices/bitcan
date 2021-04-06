@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * Created by Q-Solutions Studio
+ * Date: 29.07.2020
+ *
+ * @category    Magespices
+ * @package     Magespices_Bitcan
+ * @author      Maciej Buchert <maciej@qsolutionsstudio.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+	<default>
+		<payment>
+			<bitcan>
+				<active>0</active>
+				<title>Bitcan</title>
+				<order_status>pending</order_status>
+				<allowspecific>1</allowspecific>
+				<specificcountry>PL</specificcountry>
+				<model>Magespices\Bitcan\Model\Payment\Bitcan</model>
+				<group>offline</group>
+				<re_captcha>6LdrT-0UAAAAAPY4NW4myIjVGGje8BExtZtXyDAs</re_captcha>
+				<min_order_total>100</min_order_total>
+			</bitcan>
+		</payment>
+		<dev>
+			<js>
+				<minify_exclude>
+					<recaptcha>https://www.google.com/recaptcha/api.js</recaptcha>
+					<bcwidget>https://cdn.bitcan.pl/purchase_box/js/bcwidget.js</bcwidget>
+				</minify_exclude>
+			</js>
+		</dev>
+	</default>
+</config>

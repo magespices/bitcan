@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!--
+ /**
+ * Created by Q-Solutions Studio
+ * Date: 03.08.2020
+ *
+ * @category    Magespices
+ * @package     Magespices_Bitcan
+ * @author      Maciej Buchert <maciej@qsolutionsstudio.com>
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="magespices_bitcan_config_provider" xsi:type="object">Magespices\Bitcan\Model\ConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+</config>
