@@ -14,13 +14,14 @@ define(
         'ko',
         'Magento_Ui/js/modal/modal',
         'Magento_Checkout/js/model/quote',
+        'Magento_Checkout/js/checkout-data',
         'Magento_Catalog/js/price-utils',
         'Magento_Ui/js/model/messageList',
         'mage/url',
         'https://www.google.com/recaptcha/api.js',
         'https://cdn.bitcan.pl/purchase_box/js/bcwidget.js',
     ],
-    function ($, $t, Component, ko, modal, quote, priceUtils, messageList , url) {
+    function ($, $t, Component, ko, modal, quote, checkoutData, priceUtils, messageList , url) {
         'use strict';
 
         return Component.extend({
@@ -410,21 +411,21 @@ define(
                 $this.text(time);
 
                 $({countAmt: $this.text()}).animate({
-                    countAmt: countSeconds
-                },
-                {
-                    duration: time * 1000, //120s
-                    easing:'linear',
-                    step: function() {
-                        $this.text(Math.floor(this.countAmt));
+                        countAmt: countSeconds
                     },
-                    complete: function() {
-                        $("#bitcan-counter-info").css('display', 'none');
-                        $resendCodeLink.removeClass('disabled');
-                        $resendCodeLink.removeAttr('disabled');
-                        $this.text(this.countAmt);
-                    }
-                });
+                    {
+                        duration: time * 1000, //120s
+                        easing:'linear',
+                        step: function() {
+                            $this.text(Math.floor(this.countAmt));
+                        },
+                        complete: function() {
+                            $("#bitcan-counter-info").css('display', 'none');
+                            $resendCodeLink.removeClass('disabled');
+                            $resendCodeLink.removeAttr('disabled');
+                            $this.text(this.countAmt);
+                        }
+                    });
             },
 
             /**
@@ -637,7 +638,7 @@ define(
                 let data = {
                     token: self.transactionData.token,
                     name: `${billingAddress.firstname} ${billingAddress.lastname}`,
-                    email: window.checkoutConfig.customerData.email,
+                    email: checkoutData.getValidatedEmailValue(),
                     address: self.getBitcoinAddress(),
                     payment_method: String(paymentMethodId),
                     blik: null,
@@ -800,7 +801,7 @@ define(
                 let data = {
                     token: self.transactionData.token,
                     name: `${billingAddress.firstname} ${billingAddress.lastname}`,
-                    email: window.checkoutConfig.customerData.email,
+                    email: checkoutData.getValidatedEmailValue(),
                     address: self.getBitcoinAddress(),
                     payment_method: self.blikId,
                     blik: blikCode,
